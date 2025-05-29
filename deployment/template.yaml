@@ -1,0 +1,67 @@
+---
+apiVersion: template.openshift.io/v1
+kind: Template
+metadata:
+  name: deployment-template
+parameters:
+  - name: HOST
+    description: Route host
+    required: true
+objects:
+  - apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: afula
+      labels:
+        app: afula
+    spec:
+      replicas: 1
+      selector:
+        matchLabels:
+          app: afula
+      template:
+        metadata:
+          labels:
+            app: afula
+        spec:
+          containers:
+          - name: afula
+            image: ghcr.io/platform-engineering-org/afula:latest
+            ports:
+            - containerPort: 5000
+            env:
+            - name: HTTPD_START_SERVERS
+              value: "1"
+            - name: HTTPD_MAX_REQUEST_WORKERS
+              value: "256"
+  - apiVersion: v1
+    kind: Service
+    metadata:
+      name: afula
+      labels:
+        app: afula
+    spec:
+      ports:
+      - port: 5000
+        targetPort: 5000
+        protocol: TCP
+      selector:
+        app: afula
+      type: ClusterIP
+  - apiVersion: route.openshift.io/v1
+    kind: Route
+    metadata:
+      name: afula
+      labels:
+        shard: internal
+        type: sharded
+    spec:
+      host: ${HOST}
+      tls:
+        termination: edge
+        insecureEdgeTerminationPolicy: Redirect
+      to:
+        kind: Service
+        name: afula
+      port:
+        targetPort: 5000
