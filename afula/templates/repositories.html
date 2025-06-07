@@ -21,12 +21,12 @@
     <table>
         <tr>
             <th>NAME</th>
-            <th>PATH</th>
+            <th>URL</th>
         </tr>
         {% for repo in repositories %}
         <tr>
             <td>{{ repo.name }}</td>
-            <td>{{ repo.path }}</td>
+            <td>{{ repo.url }}</td>
         </tr>
         {% endfor %}
     </table>
