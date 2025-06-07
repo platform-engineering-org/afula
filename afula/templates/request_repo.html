@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Request Repo</title>
+</head>
+<body>
+    <h1>Request a Repo</h1>
+    <form method="POST">
+        {{ form.hidden_tag() }}
+        <div>
+            {{ form.repo_name.label }}<br>
+            {{ form.repo_name(size=32) }}
+            {% if form.repo_name.errors %}
+                <ul class="errors">
+                    {% for error in form.repo_name.errors %}
+                        <li style="color: red;">{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+        <div>
+            {{ form.repo_url.label }}<br>
+            {{ form.repo_url(size=32) }}
+            {% if form.repo_url.errors %}
+                <ul class="errors">
+                    {% for error in form.repo_url.errors %}
+                        <li style="color: red;">{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+        <input type="submit" value="Submit">
+    </form>
+</body>
+</html>
