@@ -36,4 +36,6 @@ jobs:
       - name: Apply manifests
         run: |
           kind load docker-image ghcr.io/${{ github.repository_owner }}/afula:latest --name afula
-          kubectl apply -f deploy/kind.yaml
+          kubectl apply -f deploy/postgres-secret.yaml
+          kubectl apply -f deploy/postgres.yaml
+          kubectl apply -f deploy/afula.yaml

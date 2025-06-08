@@ -18,15 +18,34 @@ Author: Liora Milbaum
 """
 
 import configparser
+import os
 
-from flask import Flask, render_template, redirect, url_for
 import register
+from flask import Flask, redirect, render_template, url_for
+from models import Repo, db
+
+DB_HOST = os.environ.get("POSTGRES_HOST", "postgres")
+DB_NAME = os.environ.get("POSTGRES_DB", "mydb")
+DB_USER = os.environ.get("POSTGRES_USER", "myuser")
+DB_PASS = os.environ.get("POSTGRES_PASSWORD", "mypassword")
 
 app = Flask(__name__)
 app.config["WTF_CSRF_ENABLED"] = False
+app.config["SQLALCHEMY_DATABASE_URI"] = (
+    f"postgresql://{DB_USER}:{DB_PASS}@{DB_HOST}:5432/{DB_NAME}"
+)
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+db.init_app(app)
 
 
-@app.route("/")
+@app.route("/list", methods=["GET"])
+def list():
+    """List Repositories."""
+    repos = Repo.query.all()
+    return render_template("repos.html", repos=repos)
+
+
+@app.route("/", methods=["GET"])
 def list_repositories():
     """List Repositories Page."""
     config = configparser.ConfigParser()
@@ -42,24 +61,30 @@ def list_repositories():
 @app.route("/register-repo", methods=["GET", "POST"])
 def register_repo():
     """Request to onboard a Repo Form."""
-    form = register.RequestForm()
+    form = register.RegisterForm()
     if form.validate_on_submit():
         repo_name = form.repo_name.data
         repo_url = form.repo_url.data
 
-        print(f"Requested Repository - Name: {repo_name}, Url: {repo_url}")
+        print(f"Repository Registered - Name: {repo_name}, Url: {repo_url}")
 
         return redirect(url_for("success"))
 
-    return render_template("request_repo.html", form=form)
+    return render_template("register_form.html", form=form)
 
 
-@app.route("/success")
+@app.route("/success", methods=["GET"])
 def success():
     """Success Message."""
-    form = register.RequestForm()
-    return "Repository request submitted successfully!"
+    return "Repository has been registered successfully.!"
+
+
+def init():
+    """Initialize the db."""
+    with app.app_context():
+        db.create_all()
 
 
 if __name__ == "__main__":
+    init()
     app.run(host="0.0.0.0", port=5000, debug=True)

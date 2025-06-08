@@ -1,40 +1,36 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: afula-app
+  name: afula
   labels:
-    app: afula-app
+    app: afula
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: afula-app
+      app: afula
   template:
     metadata:
       labels:
-        app: afula-app
+        app: afula
     spec:
       containers:
-      - name: afula-app
+      - name: afula
         image: ghcr.io/platform-engineering-org/afula:latest
         imagePullPolicy: Never
         ports:
         - containerPort: 5000
-        resources:
-          limits:
-            memory: "256Mi"
-            cpu: "500m"
-          requests:
-            memory: "128Mi"
-            cpu: "100m"
+        env:
+          - name: DATABASE_URL
+            value: postgresql://myuser:mypassword@postgres:5432/mydb
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: afula-app-service
+  name: afula
 spec:
   selector:
-    app: afula-app
+    app: afula
   ports:
   - port: 5000
     targetPort: 5000
