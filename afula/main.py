@@ -1,7 +1,6 @@
 import configparser
 
-from flask import Flask, render_template, request, redirect, url_for
-from flask_wtf.csrf import CSRFProtect
+from flask import Flask, render_template, redirect, url_for
 import request
 
 app = Flask(__name__)
