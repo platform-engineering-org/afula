@@ -1,9 +1,27 @@
+"""
+Register module for managing user and service registration.
+
+This module provides functions and classes to handle the registration
+of repositories with Renovate, service initialization, and storing
+related metadata in the backend database.
+
+Author: Liora Milbaum
+"""
+
 from flask_wtf import FlaskForm
 from wtforms import StringField
 from wtforms.validators import DataRequired, Length, Regexp
 
 
-class RequestForm(FlaskForm):
+class RegisterForm(FlaskForm):
+    """
+    Form for registering a new repository.
+
+    This form captures necessary input fields such as repository name,
+    Git URL, and metadata for onboarding into the Renovate management system.
+    It includes validation methods to ensure input correctness.
+    """
+
     repo_name = StringField(
         "Repo Name",
         validators=[
