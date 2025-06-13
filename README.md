@@ -2,79 +2,28 @@
 
 Renovate Repos Manager
 
-## Local Development & Execution
-
-### Build & Run Locally
-
-#### Docker
-
-##### Prerequisites
-
-- docker installed
-
-##### Instructions
-
-1. Build the container image (or pull the pre-built one):
-
-    # To build locally (optional)
-
-    ```bash
-    docker build -t ghcr.io/platform-engineering-org/afula:latest .
-    ```
-
-2. Run the application using the public image:
-
-    ```bash
-    docker run -p 5000:5000 ghcr.io/platform-engineering-org/afula:latest
-    ```
-
-3. Access the application at `http://127.0.0.1:5000`.
-
-#### Kind
+## Local dev environment
 
 ##### Prerequisites
 
 - kind installed
 - kubectl installed
+- make installed
 
 ##### Instructions
 
-1. Build the container image:
+1. Create Environment
 
     ```bash
-    docker build -t ghcr.io/platform-engineering-org/afula:latest .
+    make up
     ```
 
-2. Create cluster
+2. Access the application at `http://127.0.0.1:5000`.
+
+3. Delete cluster
 
     ```bash
-    kind create cluster
-    ```
-
-3. Load image
-
-    ```bash
-    kind load docker-image ghcr.io/platform-engineering-org/afula:latest
-    ```
-
-4. Deploy the application:
-
-    ```bash
-    kubectl apply -f deploy/kind.yaml
-    ```
-
-5. Port forwarding
-
-    ```bash
-    kubectl port-forward service/afula-app-service 5000:5000
-    ```
-
-6. Access the application at `http://127.0.0.1:5000`.
-
-7. Delete cluster
-
-    ```bash
-    kind delete cluster
+    make down
     ```
 
 ## OpenShift Deployment
