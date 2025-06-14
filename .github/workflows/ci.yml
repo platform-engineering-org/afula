@@ -26,3 +26,6 @@ jobs:
 
       - name: Run pre-commit
         run: pre-commit run --all-files
+
+      - name: Run unit tests with pytest
+        run: PYTHONPATH=$(pwd) pytest

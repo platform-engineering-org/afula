@@ -10,7 +10,7 @@ Classes:
 Author: Liora Milbaum
 """
 
-import database
+from . import database
 
 
 class Repo(database.db.Model):

@@ -1,10 +1,7 @@
 """
 Provide and configure the SQLAlchemy database extension.
 
-This module initializes the global `db` instance using Flask‑SQLAlchemy,
-which simplifies database interaction. It also exposes:
-- `db.Model`: Base class for ORM models.
-- `db.session`: Scoped session for executing queries and transactions.
+This module initializes the global `db` instance using Flask‑SQLAlchemy.
 
 Author: Liora Milbaum
 """
