@@ -6,6 +6,7 @@ Author: Liora Milbaum
 
 import flask
 
+import database
 import forms
 import models
 
@@ -19,17 +20,15 @@ def list_repos():
     return flask.render_template("repos.html", repos=repos)
 
 
-@bp.route("/register-repo", methods=["GET", "POST"])
+@bp.route("/register", methods=["GET", "POST"])
 def register_repo():
     """Request to onboard a Repo Form."""
     form = forms.RegisterForm()
     if form.validate_on_submit():
-        repo_name = form.repo_name.data
-        repo_url = form.repo_url.data
-
-        print(f"Repository Registered - Name: {repo_name}, Url: {repo_url}")
-
-        return flask.redirect(flask.url_for("success"))
+        new_repo = models.Repo(name=form.repo_name.data, url=form.repo_url.data)
+        database.db.session.add(new_repo)
+        database.db.session.commit()
+        return flask.redirect(flask.url_for("repos.success"))
 
     return flask.render_template("register_form.html", form=form)
 
