@@ -4,10 +4,9 @@ Provide the Flask blueprint for repository routes.
 Author: Liora Milbaum
 """
 
-import database
 import flask
-import forms
-import models
+
+from . import database, forms, models
 
 bp = flask.Blueprint("repos", __name__, url_prefix="/repos")
 
