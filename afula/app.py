@@ -20,29 +20,35 @@ Author: Liora Milbaum
 import configparser
 import os
 
-import register
-from flask import Flask, redirect, render_template, url_for
-from models import Repo, db
-
-DB_HOST = os.environ.get("POSTGRES_HOST", "postgres")
-DB_NAME = os.environ.get("POSTGRES_DB", "mydb")
-DB_USER = os.environ.get("POSTGRES_USER", "myuser")
-DB_PASS = os.environ.get("POSTGRES_PASSWORD", "mypassword")
-
-app = Flask(__name__)
-app.config["WTF_CSRF_ENABLED"] = False
-app.config["SQLALCHEMY_DATABASE_URI"] = (
-    f"postgresql://{DB_USER}:{DB_PASS}@{DB_HOST}:5432/{DB_NAME}"
-)
-app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-db.init_app(app)
+import database
+import flask
+import routes
 
 
-@app.route("/list", methods=["GET"])
-def list():
-    """List Repositories."""
-    repos = Repo.query.all()
-    return render_template("repos.html", repos=repos)
+def create_app():
+    """Create and configure the Flask application."""
+    app = Flask(__name__)
+    DB_HOST = os.environ.get("POSTGRES_HOST", "postgres")
+    DB_NAME = os.environ.get("POSTGRES_DB", "mydb")
+    DB_USER = os.environ.get("POSTGRES_USER", "myuser")
+    DB_PASS = os.environ.get("POSTGRES_PASSWORD", "mypassword")
+
+    myapp = flask.Flask(__name__)
+    myapp.config["WTF_CSRF_ENABLED"] = False
+    myapp.config["SQLALCHEMY_DATABASE_URI"] = (
+        f"postgresql://{DB_USER}:{DB_PASS}@{DB_HOST}:5432/{DB_NAME}"
+    )
+    myapp.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+    database.db.init_app(myapp)
+    myapp.register_blueprint(routes.bp)
+
+    with myapp.app_context():
+        database.db.create_all()
+
+    return myapp
+
+
+app = create_app()
 
 
 @app.route("/", methods=["GET"])
@@ -55,36 +61,8 @@ def list_repositories():
         repository = {"name": section}
         repository.update(config[section])
         repositories.append(repository)
-    return render_template("repositories.html", repositories=repositories)
-
-
-@app.route("/register-repo", methods=["GET", "POST"])
-def register_repo():
-    """Request to onboard a Repo Form."""
-    form = register.RegisterForm()
-    if form.validate_on_submit():
-        repo_name = form.repo_name.data
-        repo_url = form.repo_url.data
-
-        print(f"Repository Registered - Name: {repo_name}, Url: {repo_url}")
-
-        return redirect(url_for("success"))
-
-    return render_template("register_form.html", form=form)
-
-
-@app.route("/success", methods=["GET"])
-def success():
-    """Success Message."""
-    return "Repository has been registered successfully.!"
-
-
-def init():
-    """Initialize the db."""
-    with app.app_context():
-        db.create_all()
+    return flask.render_template("repositories.html", repositories=repositories)
 
 
 if __name__ == "__main__":
-    init()
     app.run(host="0.0.0.0", port=5000, debug=True)
