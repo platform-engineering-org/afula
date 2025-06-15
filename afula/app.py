@@ -24,18 +24,29 @@ import register
 from flask import Flask, redirect, render_template, url_for
 from models import Repo, db
 
-DB_HOST = os.environ.get("POSTGRES_HOST", "postgres")
-DB_NAME = os.environ.get("POSTGRES_DB", "mydb")
-DB_USER = os.environ.get("POSTGRES_USER", "myuser")
-DB_PASS = os.environ.get("POSTGRES_PASSWORD", "mypassword")
 
-app = Flask(__name__)
-app.config["WTF_CSRF_ENABLED"] = False
-app.config["SQLALCHEMY_DATABASE_URI"] = (
-    f"postgresql://{DB_USER}:{DB_PASS}@{DB_HOST}:5432/{DB_NAME}"
-)
-app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-db.init_app(app)
+def create_app():
+    """Create and configure the Flask application."""
+    DB_HOST = os.environ.get("POSTGRES_HOST", "postgres")
+    DB_NAME = os.environ.get("POSTGRES_DB", "mydb")
+    DB_USER = os.environ.get("POSTGRES_USER", "myuser")
+    DB_PASS = os.environ.get("POSTGRES_PASSWORD", "mypassword")
+
+    app = Flask(__name__)
+    app.config["WTF_CSRF_ENABLED"] = False
+    app.config["SQLALCHEMY_DATABASE_URI"] = (
+        f"postgresql://{DB_USER}:{DB_PASS}@{DB_HOST}:5432/{DB_NAME}"
+    )
+    app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+    db.init_app(app)
+
+    with app.app_context():
+        db.create_all()
+
+    return app
+
+
+app = create_app()
 
 
 @app.route("/list", methods=["GET"])
