@@ -8,12 +8,12 @@ related metadata in the backend database.
 Author: Liora Milbaum
 """
 
-from flask_wtf import FlaskForm
-from wtforms import StringField
-from wtforms.validators import DataRequired, Length, Regexp
+import flask_wtf
+import wtforms
+import wtforms.validators
 
 
-class RegisterForm(FlaskForm):
+class RegisterForm(flask_wtf.FlaskForm):
     """
     Form for registering a new repository.
 
@@ -22,23 +22,23 @@ class RegisterForm(FlaskForm):
     It includes validation methods to ensure input correctness.
     """
 
-    repo_name = StringField(
+    repo_name = wtforms.StringField(
         "Repo Name",
         validators=[
-            DataRequired(),
-            Length(min=2, max=20),
-            Regexp(
+            wtforms.validators.DataRequired(),
+            wtforms.validators.Length(min=2, max=20),
+            wtforms.validators.Regexp(
                 r"^[a-zA-Z0-9\-]+$",
                 message="Only letters, numbers and dashes are allowed",
             ),
         ],
     )
-    repo_url = StringField(
+    repo_url = wtforms.StringField(
         "Repo Url",
         validators=[
-            DataRequired(),
-            Length(min=2, max=50),
-            Regexp(
+            wtforms.validators.DataRequired(),
+            wtforms.validators.Length(min=2, max=50),
+            wtforms.validators.Regexp(
                 r"(?:https?|git)://(?:www\.)?(github\.com|gitlab\.com)/([\w.-]+/[\w.-]+)(?:\.git)?",
                 message="Git repository URLs from GitHub or GitLab",
             ),
