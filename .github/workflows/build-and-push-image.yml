@@ -16,7 +16,7 @@ jobs:
     steps:
 
       - name: Checkout code
-        uses: actions/checkout@4.0.0
+        uses: actions/checkout@4.2.2
         with:
           ref: refs/pull/${{ github.event.pull_request.number }}/merge
 
