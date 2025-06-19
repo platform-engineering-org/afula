@@ -50,13 +50,6 @@ def create_app():
 app = create_app()
 
 
-@app.route("/list", methods=["GET"])
-def list_repos():
-    """List Repositories."""
-    repos = models.Repo.query.all()
-    return flask.render_template("repos.html", repos=repos)
-
-
 @app.route("/", methods=["GET"])
 def list_repositories():
     """List Repositories Page."""
@@ -68,27 +61,6 @@ def list_repositories():
         repository.update(config[section])
         repositories.append(repository)
     return flask.render_template("repositories.html", repositories=repositories)
-
-
-@app.route("/register-repo", methods=["GET", "POST"])
-def register_repo():
-    """Request to onboard a Repo Form."""
-    form = forms.RegisterForm()
-    if form.validate_on_submit():
-        repo_name = form.repo_name.data
-        repo_url = form.repo_url.data
-
-        print(f"Repository Registered - Name: {repo_name}, Url: {repo_url}")
-
-        return flask.redirect(flask.url_for("success"))
-
-    return flask.render_template("register_form.html", form=form)
-
-
-@app.route("/success", methods=["GET"])
-def success():
-    """Success Message."""
-    return "Repository has been registered successfully.!"
 
 
 def init():
