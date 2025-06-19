@@ -22,8 +22,8 @@ import os
 
 import flask
 
+import forms
 import models
-import register
 
 
 def create_app():
@@ -33,16 +33,16 @@ def create_app():
     DB_USER = os.environ.get("POSTGRES_USER", "myuser")
     DB_PASS = os.environ.get("POSTGRES_PASSWORD", "mypassword")
 
-    app = Flask(__name__)
+    app = flask.Flask(__name__)
     app.config["WTF_CSRF_ENABLED"] = False
     app.config["SQLALCHEMY_DATABASE_URI"] = (
         f"postgresql://{DB_USER}:{DB_PASS}@{DB_HOST}:5432/{DB_NAME}"
     )
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-    db.init_app(app)
+    models.db.init_app(app)
 
     with app.app_context():
-        db.create_all()
+        models.db.create_all()
 
     return app
 
@@ -51,7 +51,7 @@ app = create_app()
 
 
 @app.route("/list", methods=["GET"])
-def list():
+def list_repos():
     """List Repositories."""
     repos = models.Repo.query.all()
     return flask.render_template("repos.html", repos=repos)
@@ -73,14 +73,14 @@ def list_repositories():
 @app.route("/register-repo", methods=["GET", "POST"])
 def register_repo():
     """Request to onboard a Repo Form."""
-    form = register.RegisterForm()
+    form = forms.RegisterForm()
     if form.validate_on_submit():
         repo_name = form.repo_name.data
         repo_url = form.repo_url.data
 
         print(f"Repository Registered - Name: {repo_name}, Url: {repo_url}")
 
-        return flask.redirect(url_for("success"))
+        return flask.redirect(flask.url_for("success"))
 
     return flask.render_template("register_form.html", form=form)
 

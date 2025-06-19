@@ -1,7 +1,7 @@
 """
-Register module for managing user and service registration.
+Provide a Registration Form.
 
-This module provides functions and classes to handle the registration
+Module provides functions and classes to handle the registration
 of repositories with Renovate, service initialization, and storing
 related metadata in the backend database.
 
@@ -10,7 +10,6 @@ Author: Liora Milbaum
 
 import flask_wtf
 import wtforms
-import wtforms.validators
 
 
 class RegisterForm(flask_wtf.FlaskForm):
