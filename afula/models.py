@@ -10,17 +10,15 @@ Classes:
 Author: Liora Milbaum
 """
 
-import flask_sqlalchemy
-
-db = flask_sqlalchemy.SQLAlchemy()
+import database
 
 
-class Repo(db.Model):
+class Repo(database.db.Model):
     """Registered repository."""
 
     __tablename__ = "repos"
 
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(128), nullable=False)
-    url = db.Column(db.String(256), nullable=False, unique=True)
-    active = db.Column(db.Boolean, default=True)
+    id = database.db.Column(database.db.Integer, primary_key=True)
+    name = database.db.Column(database.db.String(128), nullable=False)
+    url = database.db.Column(database.db.String(256), nullable=False, unique=True)
+    active = database.db.Column(database.db.Boolean, default=True)

@@ -22,8 +22,8 @@ import os
 
 import flask
 
-import forms
-import models
+import database
+import routes
 
 
 def create_app():
@@ -39,10 +39,11 @@ def create_app():
         f"postgresql://{DB_USER}:{DB_PASS}@{DB_HOST}:5432/{DB_NAME}"
     )
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-    models.db.init_app(app)
+    database.db.init_app(app)
+    app.register_blueprint(routes.bp)
 
     with app.app_context():
-        models.db.create_all()
+        database.db.create_all()
 
     return app
 
@@ -63,12 +64,5 @@ def list_repositories():
     return flask.render_template("repositories.html", repositories=repositories)
 
 
-def init():
-    """Initialize the db."""
-    with app.app_context():
-        models.db.create_all()
-
-
 if __name__ == "__main__":
-    init()
     app.run(host="0.0.0.0", port=5000, debug=True)
