@@ -1,5 +1,5 @@
 [tool.ruff]
-src = ["afula"]
+src = ["manager"]
 
 [tool.ruff.lint]
 select = ["D", "I"]
