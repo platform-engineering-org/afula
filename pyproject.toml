@@ -1,6 +1,14 @@
 [tool.ruff]
-src = ["manager"]
+src = ["manager", "processor"]
 
 [tool.ruff.lint]
 select = ["D", "I"]
 ignore = ["D203", "D212"]
+
+[tool.pytest.ini_options]
+addopts = "-s"
+testpaths = [
+  "manager/tests",
+  "processor/tests",
+]
+pythonpath = [ "." ]
