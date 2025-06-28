@@ -9,4 +9,5 @@ It stores metadata about repositories in a database and coordinates renovation t
 ## 🧩 Architecture
 
 - **PostgreSQL** – stores repository metadata
-- **Manager microservice**
+- **Manager**
+- **Processor**
