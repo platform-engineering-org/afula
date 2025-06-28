@@ -9,7 +9,7 @@ This module tests:
 """
 
 import pytest
-from afula import application, models
+from manager import application, models
 
 
 @pytest.fixture
