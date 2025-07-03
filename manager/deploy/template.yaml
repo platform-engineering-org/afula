@@ -11,22 +11,22 @@ objects:
   - apiVersion: apps/v1
     kind: Deployment
     metadata:
-      name: afula
+      name: manager
       labels:
-        app: afula
+        app: manager
     spec:
       replicas: 1
       selector:
         matchLabels:
-          app: afula
+          app: manager
       template:
         metadata:
           labels:
-            app: afula
+            app: manager
         spec:
           containers:
-          - name: afula
-            image: ghcr.io/platform-engineering-org/afula:latest
+          - name: manager
+            image: ghcr.io/platform-engineering-org/afula-manager:latest
             ports:
             - containerPort: 5000
             env:
@@ -37,21 +37,21 @@ objects:
   - apiVersion: v1
     kind: Service
     metadata:
-      name: afula
+      name: manager
       labels:
-        app: afula
+        app: manager
     spec:
       ports:
       - port: 5000
         targetPort: 5000
         protocol: TCP
       selector:
-        app: afula
+        app: manager
       type: ClusterIP
   - apiVersion: route.openshift.io/v1
     kind: Route
     metadata:
-      name: afula
+      name: manager
       labels:
         shard: internal
         type: sharded
@@ -62,6 +62,6 @@ objects:
         insecureEdgeTerminationPolicy: Redirect
       to:
         kind: Service
-        name: afula
+        name: manager
       port:
         targetPort: 5000
