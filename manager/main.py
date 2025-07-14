@@ -19,7 +19,7 @@ Author: Liora Milbaum
 
 import flask
 
-from . import config, database, routes
+from manager import config, database, routes
 
 
 def create_app(test_config=None):

@@ -9,7 +9,7 @@ This module tests:
 """
 
 import pytest
-from manager import application, models
+from manager import main, models
 
 
 @pytest.fixture
@@ -20,7 +20,7 @@ def app():
         "SQLALCHEMY_DATABASE_URI": "sqlite:///:memory:",
         "SQLALCHEMY_TRACK_MODIFICATIONS": False,
     }
-    app = application.create_app(test_config=test_config)
+    app = main.create_app(test_config=test_config)
 
     yield app
 
