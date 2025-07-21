@@ -1,7 +1,9 @@
-.PHONY: up down
+.PHONY: build up down clean
 
-up:
+build:
 	docker build -t ghcr.io/platform-engineering-org/afula-manager:latest -f manager/Dockerfile .
+
+up: build
 	kind create cluster
 	kind load docker-image ghcr.io/platform-engineering-org/afula-manager:latest
 	kubectl apply -f manager/deploy/postgres-secret.yaml
@@ -12,3 +14,6 @@ up:
 
 down:
 	kind delete cluster
+
+clean:
+	docker system prune --all --force
