@@ -38,10 +38,21 @@ spec:
         - name: postgres
           image: postgres:15
           env:
+            - name: POSTGRES_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: postgres-config
+                  key: POSTGRES_HOST
             - name: POSTGRES_DB
-              value: mydb
+              valueFrom:
+                configMapKeyRef:
+                  name: postgres-config
+                  key: POSTGRES_DB
             - name: POSTGRES_USER
-              value: myuser
+              valueFrom:
+                configMapKeyRef:
+                  name: postgres-config
+                  key: POSTGRES_USER
             - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:
@@ -54,3 +65,12 @@ spec:
         - name: postgres-data
           persistentVolumeClaim:
             claimName: postgres-pvc
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-config
+data:
+  POSTGRES_HOST: postgres
+  POSTGRES_DB: mydb
+  POSTGRES_USER: myuser

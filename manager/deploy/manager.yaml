@@ -21,8 +21,26 @@ spec:
         ports:
         - containerPort: 5000
         env:
-          - name: DATABASE_URL
-            value: postgresql://myuser:mypassword@postgres:5432/mydb
+          - name: POSTGRES_HOST
+            valueFrom:
+              configMapKeyRef:
+                name: postgres-config
+                key: POSTGRES_HOST
+          - name: POSTGRES_DB
+            valueFrom:
+              configMapKeyRef:
+                name: postgres-config
+                key: POSTGRES_DB
+          - name: POSTGRES_USER
+            valueFrom:
+              configMapKeyRef:
+                name: postgres-config
+                key: POSTGRES_USER
+          - name: POSTGRES_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: postgres-secret
+                key: password
 ---
 apiVersion: v1
 kind: Service
