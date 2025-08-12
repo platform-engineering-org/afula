@@ -26,9 +26,10 @@ def create_app(test_config=None):
     """Create and configure the Flask application."""
     app = flask.Flask(__name__)
 
-    app.config.from_object(config.Config)
-    if test_config:
-        app.config.update(test_config)
+    if test_config is None:
+        app.config.from_object(config.Config)
+    else:
+        app.config.from_object(test_config)
 
     database.db.init_app(app)
 

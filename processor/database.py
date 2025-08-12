@@ -9,10 +9,10 @@ import os
 
 import sqlalchemy
 
-DB_HOST = os.environ.get("POSTGRES_HOST", "postgres")
-DB_NAME = os.environ.get("POSTGRES_DB", "mydb")
-DB_USER = os.environ.get("POSTGRES_USER", "myuser")
-DB_PASS = os.environ.get("POSTGRES_PASSWORD", "mypassword")
+DB_HOST = os.environ.get("POSTGRES_HOST")
+DB_NAME = os.environ.get("POSTGRES_DB")
+DB_USER = os.environ.get("POSTGRES_USER")
+DB_PASS = os.environ.get("POSTGRES_PASSWORD")
 
 engine = sqlalchemy.create_engine(
     f"postgresql://{DB_USER}:{DB_PASS}@{DB_HOST}:5432/{DB_NAME}"

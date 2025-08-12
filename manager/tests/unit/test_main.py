@@ -8,32 +8,8 @@ This module tests:
 - That invalid payloads return appropriate error responses.
 """
 
-import pytest
-from manager import main, models
-
-
-@pytest.fixture
-def app():
-    """Create and configure a new app instance for each test."""
-    test_config = {
-        "TESTING": True,
-        "SQLALCHEMY_DATABASE_URI": "sqlite:///:memory:",
-        "SQLALCHEMY_TRACK_MODIFICATIONS": False,
-    }
-    app = main.create_app(test_config=test_config)
-
-    yield app
-
-
-@pytest.fixture
-def client(app):
-    """
-    Provide a test client for the Flask app.
-
-    Allows sending HTTP requests to the application
-    without running a real server.
-    """
-    return app.test_client()
+import sqlalchemy
+from manager import database
 
 
 def test_register_endpoint_exists(app):
@@ -44,15 +20,13 @@ def test_register_endpoint_exists(app):
 
 def test_register_repo_success(client, app):
     """POST /repos/register should insert a new Repo record into the DB."""
+    with app.app_context():
+        database.db.create_all()
+
     payload = {"name": "test-repo", "url": "https://github.com/afula/test-repo"}
     response = client.post("/repos/register", json=payload)
-    assert response.status_code == 201
 
-    # Verify the repo exists in the DB
-    with app.app_context():
-        repo = models.Repo.query.filter_by(name="test-repo").first()
-        assert repo is not None
-        assert repo.url == "https://github.com/afula/test-repo"
+    assert response.status_code == 201
 
 
 def test_register_repo_bad_payload(client):

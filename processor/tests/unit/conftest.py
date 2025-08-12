@@ -20,6 +20,7 @@ Fixtures:
 from unittest.mock import patch
 
 import pytest
+from manager import database, main
 
 
 @pytest.fixture(autouse=True)
@@ -41,3 +42,27 @@ def mock_k8s_launch_job():
     """Mock `processor.k8s.launch_job()` to prevent real job submission."""
     with patch("processor.k8s.launch_job") as mock:
         yield mock
+
+
+@pytest.fixture
+def app():
+    """
+    Pytest fixture that creates and configures the Flask application instance for testing.
+
+    Yields:
+        Flask: A Flask app instance configured for tests.
+
+    """
+    main.app.config.update(
+        {
+            "TESTING": True,
+            "SQLALCHEMY_DATABASE_URI": "sqlite:///:memory:",
+        }
+    )
+
+    with main.app.app_context():
+        database.Base.metadata.create_all(database.engine)
+        yield app
+        # Clean up after test
+        database.db.session.remove()
+        database.Base.metadata.drop_all(database.engine)
