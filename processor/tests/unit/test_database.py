@@ -1,35 +1,53 @@
 """
-Unit tests for the database module.
+Unit tests for the database utilities module.
 
-Tests:
-    - get_all_items() calls the correct SQL query and returns the result.
+Verifies the behavior of functions that interact with the database,
+including retrieving all items. Uses an in-memory SQLite database
+for isolated testing to avoid dependence on a real PostgreSQL instance.
+
+Uses pytest for test organization.
 """
 
-from unittest import mock
-
+import pytest
 import sqlalchemy
 from processor import database
 
 
-def test_get_all_items_executes_query():
-    """Test that get_all_items() executes the expected SQL query."""
-    mock_connection = mock.MagicMock()
-    mock_execute_result = mock.MagicMock()
-    mock_connection.execute.return_value = mock_execute_result
+@pytest.fixture
+def in_memory_engine(monkeypatch):
+    """Replace the engine with an in-memory SQLite engine for testing."""
+    engine = sqlalchemy.create_engine("sqlite:///:memory:")
+    monkeypatch.setattr(database, "engine", engine)
+    return engine
 
-    # Patch the engine.connect() context manager
-    with mock.patch.object(database.engine, "connect") as mock_connect:
-        mock_connect.return_value.__enter__.return_value = mock_connection
 
-        result = database.get_all_items()
+@pytest.fixture
+def create_test_table(in_memory_engine):
+    """Create a temporary 'repos' table in the in-memory database."""
+    metadata = sqlalchemy.MetaData()
+    repos = sqlalchemy.Table(
+        "repos",
+        metadata,
+        sqlalchemy.Column("id", sqlalchemy.Integer, primary_key=True),
+    )
+    metadata.create_all(in_memory_engine)
+    return repos
 
-        mock_connect.assert_called_once()
-        mock_connection.execute.assert_called_once()
 
-        # Extract the SQL text passed to execute
-        called_query = mock_connection.execute.call_args[0][0]
-        assert isinstance(called_query, sqlalchemy.sql.elements.TextClause)
-        assert "SELECT * FROM repos" in str(called_query)
+def test_get_all_items_empty(in_memory_engine, create_test_table):
+    """Test that get_all_items returns empty list when table has no rows."""
+    result = list(database.get_all_items())
+    assert result == []
 
-        # The function should return what execute() returns
-        assert result == mock_execute_result
+
+def test_get_all_items_with_data(in_memory_engine, create_test_table):
+    """Test that get_all_items returns rows correctly when table has data."""
+    with in_memory_engine.connect() as conn:
+        conn.execute(sqlalchemy.text("INSERT INTO repos (id) VALUES (1)"))
+        conn.execute(sqlalchemy.text("INSERT INTO repos (id) VALUES (2)"))
+        conn.commit()
+
+    rows = list(database.get_all_items())
+    # SQLAlchemy Row objects may be tuples or RowProxy; convert to IDs
+    ids = [row[0] for row in rows]
+    assert ids == [1, 2]
