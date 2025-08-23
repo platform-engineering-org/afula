@@ -52,10 +52,14 @@ def test_create_app_with_test_config():
 
 
 def test_home_route(client):
-    """GET / should return welcome JSON."""
+    """GET / should return the home page HTML."""
     response = client.get("/")
     assert response.status_code == 200
-    assert response.json["message"] == "Welcome to the Afula app!"
+    html = response.get_data(as_text=True)
+    assert "Welcome to the Afula App" in html
+    assert 'href="' in html
+    assert "Register a Repo" in html
+    assert "View Repositories" in html
 
 
 def test_register_endpoint_exists(app):

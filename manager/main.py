@@ -35,8 +35,8 @@ def create_app(test_config=None):
 
     @app.route("/")
     def home():
-        """Non-blueprint home route."""
-        return flask.jsonify(message="Welcome to the Afula app!")
+        """Landing page for the Afula app."""
+        return flask.render_template("home.html")
 
     app.register_blueprint(routes.bp)
 
