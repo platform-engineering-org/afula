@@ -53,5 +53,5 @@ def register_repo():
 
 @bp.route("/success", methods=["GET"])
 def success():
-    """Success Message."""
-    return "Repository has been registered successfully.!"
+    """Success page."""
+    return flask.render_template("success.html")
