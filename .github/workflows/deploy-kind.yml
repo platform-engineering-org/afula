@@ -12,13 +12,13 @@ jobs:
     steps:
 
       - name: Checkout code
-        uses: actions/checkout@v5.0.0
+        uses: actions/checkout@v6.0.2
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3.11.1
+        uses: docker/setup-buildx-action@v3.12.0
 
       - name: Build
-        uses: docker/build-push-action@v6.18.0
+        uses: docker/build-push-action@v6.19.2
         with:
           context: .
           file: manager/Dockerfile
@@ -28,7 +28,7 @@ jobs:
           platforms: linux/amd64
 
       - name: Create Kind cluster
-        uses: helm/kind-action@v1.12.0
+        uses: helm/kind-action@v1.14.0
         with:
           cluster_name: afula
           version: v0.26.0
