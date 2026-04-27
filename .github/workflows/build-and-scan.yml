@@ -10,15 +10,15 @@ jobs:
     steps:
 
       - name: Checkout code
-        uses: actions/checkout@v5.0.0
+        uses: actions/checkout@v6.0.2
         with:
           ref: refs/pull/${{ github.event.pull_request.number }}/merge
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3.11.1
+        uses: docker/setup-buildx-action@v4
 
       - name: Build for scanning
-        uses: docker/build-push-action@v6.18.0
+        uses: docker/build-push-action@v7.1.0
         with:
           context: .
           file: manager/Dockerfile
@@ -46,14 +46,14 @@ jobs:
 
       - name: Get comment ID
         id: get-comment
-        uses: peter-evans/find-comment@v3.1.0
+        uses: peter-evans/find-comment@v4
         with:
           issue-number: ${{ github.event.pull_request.number }}
           comment-author: 'github-actions[bot]'
           body-includes: '### 🔒 Trivy Scan Results for `afula-manager:pr-${{ github.event.pull_request.number }}`'
 
       - name: Post Trivy scan result as PR comment
-        uses: peter-evans/create-or-update-comment@v4.0.0
+        uses: peter-evans/create-or-update-comment@v5
         with:
           issue-number: ${{ github.event.pull_request.number }}
           comment-id: ${{ steps.get-comment.outputs.comment-id }}
